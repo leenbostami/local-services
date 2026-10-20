@@ -1,0 +1,11 @@
+{
+  "name": "local-services",
+  "private": true,
+  "scripts": {
+    "mobile": "npm --prefix mobile start",
+    "server": "npm --prefix server run dev",
+    "lint": "npm --prefix mobile run lint && npm --prefix server run lint",
+    "format": "npm --prefix mobile run format && npm --prefix server run format",
+    "format:check": "npm --prefix mobile run format:check && npm --prefix server run format:check"
+  }
+}
