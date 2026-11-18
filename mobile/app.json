@@ -30,12 +30,13 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#000000",
-          "image": "./assets/brand/homey-logo.png",
+          "backgroundColor": "#FAFAF8",
+          "image": "./assets/brand/homey-mark.png",
           "resizeMode": "contain",
-          "imageWidth": 280
+          "imageWidth": 240
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true

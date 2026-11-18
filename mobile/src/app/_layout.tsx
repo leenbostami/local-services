@@ -10,13 +10,14 @@ import {
   PlusJakartaSans_600SemiBold,
   PlusJakartaSans_700Bold,
 } from '@expo-google-fonts/plus-jakarta-sans';
-import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 
+import { AuthProvider } from '@/auth/AuthProvider';
 import { BrandSplash } from '@/components/brand/BrandSplash';
 import { LocaleProvider } from '@/i18n/LocaleProvider';
 import { MarketplaceProvider } from '@/state/MarketplaceProvider';
@@ -44,9 +45,11 @@ export default function RootLayout() {
   return (
     <LocaleProvider>
       <ThemeProvider>
-        <MarketplaceProvider>
-          <RootNavigator fontsReady={loaded || Boolean(error)} />
-        </MarketplaceProvider>
+        <AuthProvider>
+          <MarketplaceProvider>
+            <RootNavigator fontsReady={loaded || Boolean(error)} />
+          </MarketplaceProvider>
+        </AuthProvider>
       </ThemeProvider>
     </LocaleProvider>
   );
@@ -67,30 +70,34 @@ function RootNavigator({ fontsReady }: { fontsReady: boolean }) {
     <View
       style={{
         flex: 1,
-        backgroundColor: showSplash ? colors.black : colors.canvas,
+        backgroundColor: showSplash ? colors.background : colors.canvas,
         alignItems: 'center',
       }}
     >
-      <StatusBar style={showSplash ? 'light' : 'dark'} />
+      <StatusBar style="dark" />
       <View
         style={{
           flex: 1,
           width: '100%',
           maxWidth: 480,
-          backgroundColor: showSplash ? colors.black : colors.background,
+          backgroundColor: colors.background,
         }}
       >
-        {showSplash ? (
-          <BrandSplash onFinish={finishSplash} />
-        ) : (
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: colors.background },
-            }}
-          />
-        )}
+        {showSplash ? <BrandSplash onFinish={finishSplash} /> : <AppStack />}
       </View>
     </View>
+  );
+}
+
+function AppStack() {
+  const { colors } = useTheme();
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.background },
+      }}
+    />
   );
 }

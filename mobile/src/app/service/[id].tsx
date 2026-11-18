@@ -3,6 +3,7 @@ import { useState, type ReactNode } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useAuth } from '@/auth/AuthProvider';
 import { StackHeader } from '@/components/brand/AppHeader';
 import { AppPressable, Chip } from '@/components/ui/Chip';
 import { Icon } from '@/components/ui/Icon';
@@ -32,6 +33,7 @@ export default function ServiceScreen() {
   const { locale, copy, isRTL } = useLocale();
   const { colors, fonts, radius, spacing, writing } = useTheme();
   const { cityId, book } = useMarketplace();
+  const { user } = useAuth();
   const [areaId, setAreaId] = useState('');
   const [workerId, setWorkerId] = useState('');
   const [date, setDate] = useState('');
@@ -58,6 +60,11 @@ export default function ServiceScreen() {
 
   const confirm = () => {
     if (!selectedWorker || !selectedArea || !selectedDate) {
+      return;
+    }
+
+    if (!user) {
+      router.push('/login');
       return;
     }
 

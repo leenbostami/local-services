@@ -1,8 +1,10 @@
+import { useRouter } from 'expo-router';
 import { Text, View } from 'react-native';
 
-import { Chip } from '@/components/ui/Chip';
+import { useAuth } from '@/auth/AuthProvider';
+import { AppPressable, Chip } from '@/components/ui/Chip';
 import { Screen, ScreenBody } from '@/components/ui/Screen';
-import { cities, cityById, household } from '@/domain/catalog';
+import { cities, cityById } from '@/domain/catalog';
 import { localize } from '@/domain/types';
 import { useLocale } from '@/i18n/LocaleProvider';
 import { useMarketplace } from '@/state/MarketplaceProvider';
@@ -12,9 +14,11 @@ export default function ProfileScreen() {
   const { locale, copy, setLocale } = useLocale();
   const { colors, fonts, radius, spacing, shadow, writing } = useTheme();
   const { cityId, setCityId, bookings } = useMarketplace();
+  const { user, logOut } = useAuth();
+  const router = useRouter();
   const city = cityById(cityId);
   const workerCount = new Set(bookings.map((booking) => booking.workerId)).size;
-  const name = localize(household.name, locale);
+  const name = user?.name ?? '';
 
   return (
     <Screen scroll>
@@ -51,11 +55,29 @@ export default function ProfileScreen() {
             }}
           >
             <Text style={{ color: colors.onPrimary, fontFamily: fonts.bold, fontSize: 28 }}>
-              {name.slice(0, 1)}
+              {(user ? name : copy.guest).slice(0, 1)}
             </Text>
           </View>
           <View style={{ alignItems: 'center', gap: 4 }}>
-            <Text style={{ color: colors.text, fontFamily: fonts.bold, fontSize: 22 }}>{name}</Text>
+            <Text style={{ color: colors.text, fontFamily: fonts.bold, fontSize: 22 }}>
+              {user ? name : copy.guest}
+            </Text>
+            {user ? (
+              <Text style={{ color: colors.muted, fontFamily: fonts.regular, fontSize: 14 }}>
+                {user.email}
+              </Text>
+            ) : (
+              <Text
+                style={{
+                  color: colors.muted,
+                  fontFamily: fonts.regular,
+                  fontSize: 14,
+                  textAlign: 'center',
+                }}
+              >
+                {copy.signInToBook}
+              </Text>
+            )}
             <Text style={{ color: colors.muted, fontFamily: fonts.regular, fontSize: 14 }}>
               {city ? localize(city.name, locale) : ''} · {copy.jordan}
             </Text>
@@ -66,6 +88,62 @@ export default function ProfileScreen() {
           <Stat label={copy.visits} value={String(bookings.length)} />
           <Stat label={copy.workers} value={String(workerCount)} />
         </View>
+
+        {user ? (
+          <AppPressable
+            onPress={() => {
+              void logOut();
+            }}
+            style={{
+              backgroundColor: colors.surface,
+              borderRadius: radius.pill,
+              borderWidth: 1,
+              borderColor: colors.line,
+              minHeight: 52,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ color: colors.accent, fontFamily: fonts.bold, fontSize: 16 }}>
+              {copy.logOut}
+            </Text>
+          </AppPressable>
+        ) : (
+          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+            <AppPressable
+              onPress={() => router.push('/login')}
+              style={{
+                flex: 1,
+                backgroundColor: colors.primary,
+                borderRadius: radius.pill,
+                minHeight: 52,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{ color: colors.onPrimary, fontFamily: fonts.bold, fontSize: 16 }}>
+                {copy.login}
+              </Text>
+            </AppPressable>
+            <AppPressable
+              onPress={() => router.push('/signup')}
+              style={{
+                flex: 1,
+                backgroundColor: colors.surface,
+                borderRadius: radius.pill,
+                borderWidth: 1,
+                borderColor: colors.line,
+                minHeight: 52,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{ color: colors.primary, fontFamily: fonts.bold, fontSize: 16 }}>
+                {copy.signUp}
+              </Text>
+            </AppPressable>
+          </View>
+        )}
 
         <View style={{ gap: spacing.sm }}>
           <Text

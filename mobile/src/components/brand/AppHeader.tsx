@@ -23,7 +23,12 @@ export function AppHeader() {
         paddingBottom: spacing.md,
       }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1 }}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={copy.home}
+        onPress={() => router.dismissTo('/')}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1 }}
+      >
         <Image
           source={brandAssets.mark}
           style={{ width: 132, height: 36 }}
@@ -31,7 +36,7 @@ export function AppHeader() {
           accessibilityLabel="Homey"
         />
         <Text style={{ color: colors.primary, fontFamily: fonts.arabic, fontSize: 22 }}>هومي</Text>
-      </View>
+      </Pressable>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={copy.notifications}

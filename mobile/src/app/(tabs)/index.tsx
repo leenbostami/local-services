@@ -9,11 +9,12 @@ import { WorkerCard } from '@/components/home/WorkerCard';
 import { Chip } from '@/components/ui/Chip';
 import { Icon } from '@/components/ui/Icon';
 import { Screen, ScreenBody } from '@/components/ui/Screen';
-import { cities, cityById, household } from '@/domain/catalog';
+import { cities, cityById } from '@/domain/catalog';
 import { greetingKey } from '@/domain/format';
 import { searchMarketplace } from '@/domain/search';
 import { localize } from '@/domain/types';
 import { trustedIn } from '@/i18n/copy';
+import { useAuth } from '@/auth/AuthProvider';
 import { useLocale } from '@/i18n/LocaleProvider';
 import { useMarketplace } from '@/state/MarketplaceProvider';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -23,6 +24,7 @@ export default function HomeScreen() {
   const { locale, copy } = useLocale();
   const { colors, fonts, radius, spacing, shadow, writing } = useTheme();
   const { cityId, setCityId } = useMarketplace();
+  const { user } = useAuth();
   const [query, setQuery] = useState('');
   const city = cityById(cityId);
   const results = searchMarketplace(query, locale, cityId);
@@ -46,7 +48,9 @@ export default function HomeScreen() {
               textAlign: writing.align,
             }}
           >
-            {copy[greetingKey()]} {localize(household.name, locale)}
+            {user
+              ? `${copy[greetingKey()]}${locale === 'ar' ? '،' : ','} ${user.name}`
+              : copy[greetingKey()]}
           </Text>
           <Text
             style={{

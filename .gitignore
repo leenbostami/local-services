@@ -7,5 +7,6 @@ npm-debug.*
 *.pem
 .env
 .env*.local
+server/data/
 *.tsbuildinfo
 .metro-health-check*
